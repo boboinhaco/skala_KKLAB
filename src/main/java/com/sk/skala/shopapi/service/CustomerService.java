@@ -14,9 +14,13 @@ import com.sk.skala.shopapi.common.SessionHandler;
 import com.sk.skala.shopapi.data.dto.CustomerSession;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
+import com.sk.skala.shopapi.exception.Error;
+import com.sk.skala.shopapi.exception.ParameterException;
+import com.sk.skala.shopapi.exception.ResponseException;
 import com.sk.skala.shopapi.repository.CustomerRepository;
 import com.sk.skala.shopapi.repository.OrderItemRepository;
 import com.sk.skala.shopapi.repository.ProductRepository;
+import com.sk.skala.shopapi.tools.StringUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,17 +49,45 @@ public class CustomerService {
 		return Response.success(pagedList);
 	}
 
+	// 고객 생성 (회원가입)
+	public Response createCustomer(Customer customer) {
+		// 필수 입력값 검증
+		if (StringUtil.isAnyEmpty(customer.getCustomerId(), customer.getCustomerPassword())) {
+			throw new ParameterException("customerId", "customerPassword");
+		}
+
+		// 아이디 중복 확인
+		if (customerRepository.existsById(customer.getCustomerId())) {
+			throw new ResponseException(Error.DATA_DUPLICATED);
+		}
+
+		// 이메일 중복 확인 (이메일은 선택 입력)
+		if (StringUtil.isNoneEmpty(customer.getEmail())
+				&& customerRepository.findByEmail(customer.getEmail()).isPresent()) {
+			throw new ResponseException(Error.DATA_DUPLICATED);
+		}
+
+		// 기본값 세팅 - 포인트 0, 권한 USER
+		if (customer.getCustomerPoint() == null) {
+			customer.setCustomerPoint(0L);
+		}
+		if (StringUtil.isAnyEmpty(customer.getRole())) {
+			customer.setRole("USER");
+		}
+
+		Customer saved = customerRepository.save(customer);
+
+		// 응답에 비밀번호가 노출되지 않도록 제거(null)
+		saved.setCustomerPassword(null);
+		return Response.success(saved);
+	}
+
 	// 단일 고객 및 주문 상품 목록 조회
 	@Transactional(readOnly = true)
 		public Response getCustomerById(String customerId) {
 		throw new UnsupportedOperationException("TODO");
 	}
-
-	// 고객 생성 (회원가입)
-	public Response createCustomer(Customer customer) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
+	
 	// 상품주문 (포인트 차감)
 	public Response placeOrder(OrderRequest order) {
 		throw new UnsupportedOperationException("TODO");
