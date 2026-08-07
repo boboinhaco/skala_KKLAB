@@ -14,6 +14,7 @@ import com.sk.skala.shopapi.common.SessionHandler;
 import com.sk.skala.shopapi.data.dto.CustomerSession;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
+import com.sk.skala.shopapi.data.table.OrderItem;
 import com.sk.skala.shopapi.exception.Error;
 import com.sk.skala.shopapi.exception.ParameterException;
 import com.sk.skala.shopapi.exception.ResponseException;
@@ -84,8 +85,11 @@ public class CustomerService {
 
 	// 단일 고객 및 주문 상품 목록 조회
 	@Transactional(readOnly = true)
-		public Response getCustomerById(String customerId) {
-		throw new UnsupportedOperationException("TODO");
+	public Response getCustomerById(String customerId) {
+		Customer customer = customerRepository.findById(customerId)
+			.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
+		List<OrderItem> orderItems = orderItemRepository.findByOrders_Customer_CustomerId(customerId);
+
 	}
 	
 	// 상품주문 (포인트 차감)
