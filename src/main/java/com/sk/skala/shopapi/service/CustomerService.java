@@ -12,6 +12,7 @@ import com.sk.skala.shopapi.common.PagedList;
 import com.sk.skala.shopapi.common.Response;
 import com.sk.skala.shopapi.common.SessionHandler;
 import com.sk.skala.shopapi.data.dto.CustomerSession;
+import com.sk.skala.shopapi.data.dto.OrderItemDto;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
 import com.sk.skala.shopapi.data.table.OrderItem;
@@ -89,7 +90,9 @@ public class CustomerService {
 		Customer customer = customerRepository.findById(customerId)
 			.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
 		List<OrderItem> orderItems = orderItemRepository.findByOrders_Customer_CustomerId(customerId);
-
+		OrderItemDto.builder()
+			.productId()
+			.productName(item.)
 	}
 	
 	// 상품주문 (포인트 차감)
