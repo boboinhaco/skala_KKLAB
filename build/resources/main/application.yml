@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: skala-shop-api
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:shopdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true          # http://localhost:8080/h2-console 접속 가능
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # 기동 시 테이블 생성, 종료 시 삭제
+    show-sql: true
+    defer-datasource-initialization: true   # data.sql을 DDL 이후에 실행
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always           # data.sql 항상 실행
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+
+app:
+  jwt:
+    secret: skala-shop-api-secret-key-must-be-at-least-32-bytes-long
+    expire-minutes: 60
+    cookie-name: bff-access
+  customer:
+    initial-point: 1000000   # 회원가입 시 지급되는 초기 포인트
+
+logging:
+  level:
+    com.sk.skala.shopapi: debug
