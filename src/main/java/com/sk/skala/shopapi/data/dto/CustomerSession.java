@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 로그인 요청 바디 (ID / 비밀번호)
+// 로그인 요청 바디
 @Getter
 @Setter
 @NoArgsConstructor

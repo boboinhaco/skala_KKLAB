@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 고객이 주문한 개별 상품 정보 (상품 + 수량)
+// 주문한 개별 상품 응답
 @Getter
 @Setter
 @Builder
@@ -16,6 +16,8 @@ public class OrderItemDto {
 
 	private Long productId;
 	private String productName;
-	private Double productPrice;
+	private Long unitPrice;
 	private Integer quantity;
+	private Long subtotal;
+	private String itemStatus;
 }

@@ -5,16 +5,17 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.sk.skala.shopapi.data.table.Customer;
 import com.sk.skala.shopapi.data.table.OrderItem;
-import com.sk.skala.shopapi.data.table.Product;
 
-// 고객 주문 상품 매핑 저장소
+// 주문 상세 저장소
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-	// 속성 순회로 특정 고객의 주문 목록 조회
-	List<OrderItem> findByCustomer_CustomerId(String customerId);
+	// 주문 1건의 상세 목록
+	List<OrderItem> findByOrders_Id(Long orderId);
 
-	// 특정 고객이 특정 상품을 이미 주문했는지 확인
-	Optional<OrderItem> findByCustomerAndProduct(Customer customer, Product product);
+	// 특정 주문에서 특정 상품을 찾기 (취소 처리용)
+	Optional<OrderItem> findByOrders_IdAndProduct_Id(Long orderId, Long productId);
+
+	// 특정 고객이 주문한 전체 상세 목록
+	List<OrderItem> findByOrders_Customer_CustomerId(String customerId);
 }
