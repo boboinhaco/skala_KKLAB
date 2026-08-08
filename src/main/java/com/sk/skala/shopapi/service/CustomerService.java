@@ -1,5 +1,6 @@
 package com.sk.skala.shopapi.service;
 
+import com.sk.skala.shopapi.aop.ApiLoggingAspect;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import com.sk.skala.shopapi.common.Response;
 import com.sk.skala.shopapi.common.SessionHandler;
 import com.sk.skala.shopapi.data.dto.CustomerSession;
 import com.sk.skala.shopapi.data.dto.OrderItemDto;
+import com.sk.skala.shopapi.data.dto.OrderListDto;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
 import com.sk.skala.shopapi.data.table.OrderItem;
@@ -31,10 +33,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerService {
 
+	private final ApiLoggingAspect apiLoggingAspect;
+	private final ProductService productService;
 	private final ProductRepository productRepository;
 	private final CustomerRepository customerRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final SessionHandler sessionHandler;
+
+	CustomerService(ProductService productService, ApiLoggingAspect apiLoggingAspect) {
+		this.productService = productService;
+		this.apiLoggingAspect = apiLoggingAspect;
+	}
 
 	// 전체 고객 목록 조회 (페이지 단위)
 	public Response getAllCustomers(int offset, int count) {
@@ -43,9 +52,9 @@ public class CustomerService {
 		List<Customer> customers = page.getContent();
 
 		// 응답에 비밀번호가 노출되지 않도록 제거(null)
-    	for (Customer c : customers) {
-        	c.setCustomerPassword(null);
-    	}
+		for (Customer c : customers) {
+			c.setCustomerPassword(null);
+		}
 
 		PagedList pagedList = new PagedList(page.getTotalElements(), offset, count, customers);
 		return Response.success(pagedList);
@@ -88,13 +97,27 @@ public class CustomerService {
 	@Transactional(readOnly = true)
 	public Response getCustomerById(String customerId) {
 		Customer customer = customerRepository.findById(customerId)
-			.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
+				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
 		List<OrderItem> orderItems = orderItemRepository.findByOrders_Customer_CustomerId(customerId);
-		OrderItemDto.builder()
-			.productId()
-			.productName(item.)
+		List<OrderItemDto> products = orderItems.stream()
+				.map(item -> OrderItemDto.builder()
+						.productId(item.getProduct().getId())
+						.productName(item.getProductName())
+						.unitPrice(item.getUnitPrice())
+						.quantity(item.getQuantity())
+						.subtotal(item.getSubtotal())
+						.itemStatus(item.getItemStatus())
+						.build())
+				.toList();
+		OrderListDto orderListDto = OrderListDto.builder()
+			.customerId(customer.getCustomerId())
+			.customerPoint(customer.getCustomerPoint().doubleValue())
+			.products(products)
+			.build();
+		return Response.success(orderListDto);
+
 	}
-	
+
 	// 상품주문 (포인트 차감)
 	public Response placeOrder(OrderRequest order) {
 		throw new UnsupportedOperationException("TODO");
