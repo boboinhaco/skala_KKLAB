@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sk.skala.shopapi.common.Response;
+import com.sk.skala.shopapi.data.dto.CancelRequest;
 import com.sk.skala.shopapi.data.dto.CustomerSession;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
@@ -71,7 +72,7 @@ public class CustomerController {
 
 	// 주문 취소
 	@PostMapping("/cancel")
-	public Response cancelOrder(@RequestBody OrderRequest order) {
-		return customerService.cancelOrder(order);
+	public Response cancelOrder(@RequestBody CancelRequest cancel) {
+		return customerService.cancelOrder(cancel);
 	}
 }

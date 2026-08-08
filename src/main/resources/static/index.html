@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>말랑말랑 꾹꾹샵</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<header class="topbar">
+	<a class="logo" href="/">
+		<span class="logo-face">🐰</span>
+		<span class="logo-text">말랑말랑 <b>꾹꾹샵</b></span>
+	</a>
+
+	<div class="account" id="account">
+		<button class="btn btn-ghost" data-open="login">로그인</button>
+		<button class="btn btn-pink" data-open="signup">회원가입</button>
+	</div>
+</header>
+
+<section class="hero">
+	<p class="hero-eyebrow">오늘의 촉감 추천</p>
+	<h1 class="hero-title">꾹— 누르면<br>기분이 말랑해져요</h1>
+	<p class="hero-desc">촉감 · 소리 · 늘어남까지 꼼꼼히 기록한 꾹꾹 리포트와 함께.</p>
+</section>
+
+<main class="wrap">
+	<div class="section-head">
+		<h2>말랑이 컬렉션</h2>
+		<span class="count" id="productCount"></span>
+	</div>
+
+	<div class="grid" id="productGrid">
+		<div class="empty">말랑이를 데려오는 중…</div>
+	</div>
+</main>
+
+<footer class="footer">
+	<span>🍡 말랑말랑 꾹꾹샵</span>
+	<span class="footer-dim">SKALA Spring 실습 프로젝트</span>
+</footer>
+
+<!-- 장바구니 -->
+<button class="cart-fab" id="cartFab" aria-label="장바구니 열기">
+	🧺<span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<aside class="drawer" id="cartDrawer" aria-hidden="true">
+	<div class="drawer-head">
+		<h3>🧺 장바구니</h3>
+		<button class="icon-btn" data-close-drawer>✕</button>
+	</div>
+
+	<div class="drawer-body" id="cartList">
+		<div class="empty small">아직 담은 말랑이가 없어요</div>
+	</div>
+
+	<div class="drawer-foot">
+		<div class="total-row">
+			<span>합계</span>
+			<b id="cartTotal">0P</b>
+		</div>
+		<input class="input" id="receiverName" placeholder="받는 분 이름">
+		<input class="input" id="address1" placeholder="배송지 주소">
+		<button class="btn btn-pink btn-block" id="orderBtn">꾹— 주문하기</button>
+	</div>
+</aside>
+
+<!-- 로그인 -->
+<div class="modal" id="modal-login" aria-hidden="true">
+	<div class="modal-card">
+		<button class="icon-btn modal-x" data-close-modal>✕</button>
+		<h3>다시 만나서 반가워요 🐰</h3>
+		<input class="input" id="loginId" placeholder="아이디">
+		<input class="input" id="loginPw" type="password" placeholder="비밀번호">
+		<button class="btn btn-pink btn-block" id="loginBtn">로그인</button>
+	</div>
+</div>
+
+<!-- 회원가입 -->
+<div class="modal" id="modal-signup" aria-hidden="true">
+	<div class="modal-card">
+		<button class="icon-btn modal-x" data-close-modal>✕</button>
+		<h3>말랑이 친구 되기 🍡</h3>
+		<input class="input" id="signupId" placeholder="아이디">
+		<input class="input" id="signupPw" type="password" placeholder="비밀번호">
+		<input class="input" id="signupName" placeholder="이름 (선택)">
+		<input class="input" id="signupEmail" placeholder="이메일 (선택)">
+		<button class="btn btn-pink btn-block" id="signupBtn">가입하기</button>
+	</div>
+</div>
+
+<div class="toast-area" id="toastArea"></div>
+
+<script src="/js/shop.js"></script>
+</body>
+</html>

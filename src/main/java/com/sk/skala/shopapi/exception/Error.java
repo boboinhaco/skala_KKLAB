@@ -8,6 +8,7 @@ public enum Error {
 	DATA_NOT_FOUND("데이터를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	DATA_DUPLICATED("이미 존재하는 데이터입니다.", HttpStatus.CONFLICT),
 	NOT_AUTHENTICATED("인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
+	DELETE_NOT_ALLOWED("삭제할 수 없는 데이터입니다.", HttpStatus.CONFLICT),
 	INSUFFICIENT_FUNDS("보유 포인트가 부족합니다.", HttpStatus.BAD_REQUEST),
 	INSUFFICIENT_QUANTITY("주문 수량이 부족합니다.", HttpStatus.BAD_REQUEST),
 	SYSTEM_ERROR("시스템 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);

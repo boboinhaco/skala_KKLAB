@@ -18,4 +18,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
 	// 특정 고객이 주문한 전체 상세 목록
 	List<OrderItem> findByOrders_Customer_CustomerId(String customerId);
+
+	// 해당 상품의 주문 이력 존재 여부 (상품 삭제 가능 여부 판단용)
+	boolean existsByProduct_Id(Long productId);
 }
