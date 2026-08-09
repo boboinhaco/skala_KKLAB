@@ -72,7 +72,7 @@ SKALA 실습 과제 **스칼라 온라인 쇼핑몰 API**를 구현하고, 그 �
 ```
 com.sk.skala.shopapi
 ├─ controller/   ProductController · CustomerController
-├─ service/      ProductService · CustomerService
+├─ service/      ProductService · CustomerService · OrderService
 ├─ repository/   Product · Customer · OrderItem · Orders · PointHistory Repository
 ├─ data/
 │  ├─ table/     Product · Customer · OrderItem · Orders · PointHistory
@@ -85,6 +85,16 @@ com.sk.skala.shopapi
 ```
 
 `Controller(요청) → Service(로직) → Repository(JPA) → DB` 계층 구조를 따릅니다.
+
+서비스는 도메인 단위로 나눴습니다.
+
+| 서비스 | 책임 |
+|---|---|
+| `CustomerService` | 회원가입 · 로그인 · 조회 · 수정 · 탈퇴 |
+| `OrderService` | 주문 · 주문 목록 · 취소 (재고/포인트 트랜잭션) |
+| `ProductService` | 상품 CRUD |
+
+엔터티 → DTO 변환은 서비스가 아니라 **DTO 의 정적 팩토리**(`OrderDto.from(...)`, `CustomerDto.from(...)`)가 담당합니다. 같은 변환을 여러 서비스에서 쓰기 때문입니다.
 
 ---
 
@@ -137,6 +147,7 @@ com.sk.skala.shopapi
 | 소유권 검증 | 주문·취소·수정·삭제는 요청 바디가 아닌 **JWT 의 고객 ID** 기준으로만 동작 |
 | 삭제 제약 | 주문 이력이 있는 고객·상품은 삭제 거부 (`DELETE_NOT_ALLOWED`, 409) |
 | 초기 포인트 | `app.customer.initial-point` 설정값을 회원가입 시 지급 |
+| 포인트 이력 | 가입(`SIGNUP`)·주문(`ORDER_USE`)·취소(`ORDER_REFUND`) 시 `point_history` 에 변동액과 처리 후 잔액을 기록 |
 | 이메일 중복 확인 | `@Column(unique = true)` 위반이 500 으로 나가지 않도록 사전 검사 |
 
 추가한 에러 코드 : `DELETE_NOT_ALLOWED(409)`
@@ -180,15 +191,36 @@ Y2K 감성 + 연구소 컨셉의 정적 페이지. 모든 데이터는 위 REST 
 
 `data.sql` 이 `stock_quantity` · `status` 를 넣지 않았습니다. 말랑이 상품 14종으로 교체하면서 모든 필수 컬럼을 채웠습니다.
 
+### 4-4. 동시 주문 시 포인트·재고 차감 유실 (lost update)
+
+두 주문이 동시에 들어오면 각자 읽은 값에서 각자 차감해 나중 커밋이 앞선 차감을 덮어썼습니다. 순차 주문은 정상이라 눈에 띄지 않는 종류의 버그입니다.
+
+```java
+// CustomerRepository / ProductRepository
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("select c from Customer c where c.customerId = :customerId")
+Optional<Customer> findByIdForUpdate(@Param("customerId") String customerId);
+```
+
+주문·취소에서 포인트와 재고를 읽을 때 이 메서드를 씁니다. 여러 상품을 주문할 때는 **상품 ID 오름차순으로 잠가** 교착을 피합니다.
+
+검증 : 10건 동시 주문 → 포인트 970,000 (= 1,000,000 − 3,000×10), 재고 45 → 35 정확히 일치.
+
+### 4-5. 비밀번호 평문 저장
+
+`spring-security-crypto` 만 추가해 BCrypt 를 적용했습니다. `spring-boot-starter-security` 는 모든 요청에 인증 필터를 걸어 별도 설정이 필요하므로 쓰지 않았습니다.
+
+- 저장 : 회원가입 · 비밀번호 변경 시 `passwordEncoder.encode(...)`
+- 검증 : 로그인 · 탈퇴 시 `passwordEncoder.matches(...)`
+
+BCrypt 는 솔트가 해시에 포함되어 같은 비밀번호도 매번 다른 값이 됩니다. 그래서 `equals()` 비교는 절대 성립하지 않습니다.
+
 ---
 
 ## 5. 남은 과제
 
 | 항목 | 내용 |
 |---|---|
-| **동시 주문 시 포인트 lost update** | 두 주문이 **동시에** 들어오면 각자 읽은 포인트에서 각자 차감해 한쪽 차감이 사라집니다. (순차 주문은 정상) 해결하려면 `@Lock(PESSIMISTIC_WRITE)` 조회 또는 `@Version` 낙관적 잠금이 필요합니다. |
-| 비밀번호 평문 저장 | BCrypt 미적용. 도입 시 회원가입·로그인·정보수정·탈퇴 4곳을 함께 수정해야 하며, 비교는 `equals()` 가 아니라 `matches()` 를 써야 합니다. |
-| 포인트 이력 미기록 | `PointHistory` 엔터티는 있으나 주문/취소 시 기록하지 않습니다. |
 | 수량 단위 부분 취소 | 취소는 상품 항목 단위까지만 지원합니다. "3개 중 1개 취소"는 `OrderItem` 분할이 필요합니다. |
 | 클라이언트 오류가 500 으로 응답 | `GlobalExceptionHandler` 의 `Exception` 핸들러가 Spring MVC 예외까지 잡아, 잘못된 Content-Type 이 415 가 아닌 500 으로 나갑니다. |
 
@@ -219,7 +251,28 @@ Y2K 감성 + 연구소 컨셉의 정적 페이지. 모든 데이터는 위 REST 
 
 ---
 
-## 7. 테스트 시나리오 (curl)
+## 7. 테스트
+
+```bash
+./gradlew test
+```
+
+| 클래스 | 건수 | 검증 대상 |
+|---|:--:|---|
+| `OrderServiceTest` | 9 | 포인트·재고 차감, 실패 시 롤백, 취소 환급, 중복 취소 차단, 소유권 검증, **동시성** |
+| `CustomerServiceTest` | 10 | BCrypt 해시 저장·검증, 초기 포인트, 포인트·권한 조작 차단, 중복 아이디, 타인 계정 수정 차단 |
+| `ShopApiApplicationTests` | 1 | 컨텍스트 로딩 |
+
+주문·취소 테스트는 **롤백과 동시성을 실제로 보기 위해 `@Transactional` 을 붙이지 않고** 커밋이 일어나게 했습니다.
+
+동시성 테스트는 8개 스레드가 동시에 주문을 넣고 최종 잔액을 확인합니다. 잠금을 제거하면 이 테스트만 실패하는 것을 확인했습니다 — 즉 잠금이 실제로 동작하는지 검증합니다.
+
+```java
+// 잠금이 없으면 차감이 유실되어 잔액이 10,000 에 가깝게 남는다.
+assertThat(pointOf(customer)).isEqualTo(10_000L - (threads * 1_000L));
+```
+
+## 8. 테스트 시나리오 (curl)
 
 ```bash
 # 1) 회원가입 - 초기 포인트 1,000,000P 지급
@@ -258,7 +311,7 @@ curl -X POST http://localhost:8080/api/customers/cancel \
 
 ---
 
-## 8. 초기 시드 데이터
+## 9. 초기 시드 데이터
 
 `data.sql` — 말랑이 상품 14종 (카테고리별로 재료 4 / 슬랑이 3 / 크런치 슬랑이 3 / 말랑이 4)
 
@@ -273,7 +326,7 @@ curl -X POST http://localhost:8080/api/customers/cancel \
 
 ---
 
-## 9. Docker 배포
+## 10. Docker 배포
 
 ```bash
 ./gradlew build

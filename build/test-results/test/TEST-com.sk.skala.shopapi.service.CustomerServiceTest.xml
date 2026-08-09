@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sk.skala.shopapi.service.CustomerServiceTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-08-09T13:08:19" hostname="choeinseoui-MacBookPro.local" time="0.878">
+  <properties/>
+  <testcase name="회원가입이 포인트 이력에 SIGNUP 으로 남는다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.077"/>
+  <testcase name="요청 바디로 포인트나 권한을 지정해도 무시된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.061"/>
+  <testcase name="다른 사람의 ID 로 수정 요청하면 거부된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.115"/>
+  <testcase name="올바른 비밀번호로 로그인하면 응답에 비밀번호가 담기지 않는다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.118"/>
+  <testcase name="비밀번호는 평문이 아니라 BCrypt 해시로 저장된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.058"/>
+  <testcase name="틀린 비밀번호와 없는 아이디는 같은 오류로 응답한다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.113"/>
+  <testcase name="같은 아이디로 다시 가입하면 거부된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.058"/>
+  <testcase name="비밀번호를 바꾸면 새 비밀번호도 해시로 저장된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.218"/>
+  <testcase name="필수값이 없으면 ParameterException 이 발생한다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.001"/>
+  <testcase name="회원가입하면 설정된 초기 포인트가 지급된다" classname="com.sk.skala.shopapi.service.CustomerServiceTest" time="0.057"/>
+  <system-out><![CDATA[2026-08-09T22:08:19.028+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.sk.skala.shopapi.service.CustomerServiceTest]: CustomerServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-08-09T22:08:19.029+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.sk.skala.shopapi.ShopApiApplication for test class com.sk.skala.shopapi.service.CustomerServiceTest
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        ph1_0.id,
+        ph1_0.amount,
+        ph1_0.balance,
+        ph1_0.created_at,
+        ph1_0.customer_id,
+        ph1_0.order_id,
+        ph1_0.reason,
+        ph1_0.type 
+    from
+        point_history ph1_0 
+    where
+        ph1_0.customer_id=? 
+    order by
+        ph1_0.created_at desc
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -16,6 +16,7 @@ import com.sk.skala.shopapi.data.dto.CustomerSession;
 import com.sk.skala.shopapi.data.dto.OrderRequest;
 import com.sk.skala.shopapi.data.table.Customer;
 import com.sk.skala.shopapi.service.CustomerService;
+import com.sk.skala.shopapi.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomerController {
 
 	private final CustomerService customerService;
+	private final OrderService orderService;
 
 	// 전체 고객 목록 조회
 	@GetMapping
@@ -37,7 +39,7 @@ public class CustomerController {
 	// 로그인한 고객의 주문 목록 (경로 고정 매핑이 {customerId} 보다 우선함)
 	@GetMapping("/orders")
 	public Response getMyOrders() {
-		return customerService.getMyOrders();
+		return orderService.getMyOrders();
 	}
 
 	// 이름으로 고객 조회 ({customerId} 와 경로가 겹치므로 /name 을 앞에 둠)
@@ -92,12 +94,12 @@ public class CustomerController {
 	// 상품 주문
 	@PostMapping("/order")
 	public Response placeOrder(@RequestBody OrderRequest order) {
-		return customerService.placeOrder(order);
+		return orderService.placeOrder(order);
 	}
 
 	// 주문 취소
 	@PostMapping("/cancel")
 	public Response cancelOrder(@RequestBody CancelRequest cancel) {
-		return customerService.cancelOrder(cancel);
+		return orderService.cancelOrder(cancel);
 	}
 }

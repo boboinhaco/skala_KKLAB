@@ -1,5 +1,7 @@
 package com.sk.skala.shopapi.data.dto;
 
+import com.sk.skala.shopapi.data.table.Customer;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,4 +21,14 @@ public class CustomerDto {
 	private String email;
 	private String phone;
 	private Long customerPoint;
+
+	public static CustomerDto from(Customer customer) {
+		return CustomerDto.builder()
+				.customerId(customer.getCustomerId())
+				.customerName(customer.getCustomerName())
+				.email(customer.getEmail())
+				.phone(customer.getPhone())
+				.customerPoint(customer.getCustomerPoint())
+				.build();
+	}
 }

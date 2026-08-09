@@ -1,5 +1,7 @@
 package com.sk.skala.shopapi.data.dto;
 
+import com.sk.skala.shopapi.data.table.Product;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,4 +30,23 @@ public class ProductDto {
 	private Integer salesCount;
 	private Integer reviewCount;
 	private Integer likeCount;
+
+	public static ProductDto from(Product product) {
+		return ProductDto.builder()
+				.id(product.getId())
+				.categoryId(product.getCategoryId())
+				.productName(product.getProductName())
+				.productPrice(product.getProductPrice())
+				.description(product.getDescription())
+				.texture(product.getTexture())
+				.soundLevel(product.getSoundLevel())
+				.stretchLevel(product.getStretchLevel())
+				.scent(product.getScent())
+				.stockQuantity(product.getStockQuantity())
+				.status(product.getStatus())
+				.salesCount(product.getSalesCount())
+				.reviewCount(product.getReviewCount())
+				.likeCount(product.getLikeCount())
+				.build();
+	}
 }

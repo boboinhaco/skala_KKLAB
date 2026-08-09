@@ -1,0 +1,2344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.sk.skala.shopapi.service.OrderServiceTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-08-09T13:08:18" hostname="choeinseoui-MacBookPro.local" time="0.193">
+  <properties/>
+  <testcase name="다른 사람의 주문은 취소할 수 없다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.089"/>
+  <testcase name="포인트가 부족하면 주문이 거부되고 재고도 원래대로 돌아간다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.008"/>
+  <testcase name="이미 취소한 주문을 다시 취소해도 포인트가 중복 환급되지 않는다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.014"/>
+  <testcase name="재고보다 많이 주문하면 거부된다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.011"/>
+  <testcase name="주문과 취소가 포인트 이력에 사용·환급으로 남는다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.025"/>
+  <testcase name="주문하면 포인트가 차감되고 재고가 줄어든다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.007"/>
+  <testcase name="주문을 취소하면 포인트가 환급되고 재고가 복구된다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.01"/>
+  <testcase name="수량이 0 이하이면 상품을 조회하기 전에 거부된다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.003"/>
+  <testcase name="같은 고객이 동시에 주문해도 포인트가 정확히 차감된다" classname="com.sk.skala.shopapi.service.OrderServiceTest" time="0.023"/>
+  <system-out><![CDATA[22:08:16.075 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.sk.skala.shopapi.service.OrderServiceTest]: OrderServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+22:08:16.109 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.sk.skala.shopapi.ShopApiApplication for test class com.sk.skala.shopapi.service.OrderServiceTest
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-08-09T22:08:16.236+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] c.s.s.shopapi.service.OrderServiceTest   : Starting OrderServiceTest using Java 21.0.11 with PID 11086 (started by choeinseo in /Users/choeinseo/skala-Spring/KKLAB)
+2026-08-09T22:08:16.237+09:00 DEBUG 11086 --- [skala-shop-api] [    Test worker] c.s.s.shopapi.service.OrderServiceTest   : Running with Spring Boot v3.3.0, Spring v6.1.8
+2026-08-09T22:08:16.237+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] c.s.s.shopapi.service.OrderServiceTest   : No active profile set, falling back to 1 default profile: "default"
+2026-08-09T22:08:16.496+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-08-09T22:08:16.513+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 5 JPA repository interfaces.
+2026-08-09T22:08:17.118+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-08-09T22:08:17.144+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-08-09T22:08:17.157+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-08-09T22:08:17.202+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-08-09T22:08:17.211+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-08-09T22:08:17.283+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:shopdb user=SA
+2026-08-09T22:08:17.283+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-08-09T22:08:17.592+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    drop table if exists customer cascade 
+Hibernate: 
+    drop table if exists order_item cascade 
+Hibernate: 
+    drop table if exists orders cascade 
+Hibernate: 
+    drop table if exists point_history cascade 
+Hibernate: 
+    drop table if exists product cascade 
+Hibernate: 
+    create table customer (
+        created_at timestamp(6),
+        customer_point bigint not null,
+        customer_id varchar(255) not null,
+        customer_name varchar(255),
+        customer_password varchar(255) not null,
+        email varchar(255) unique,
+        phone varchar(255),
+        role varchar(255) not null,
+        primary key (customer_id)
+    )
+Hibernate: 
+    create table order_item (
+        quantity integer not null,
+        id bigint generated by default as identity,
+        order_id bigint,
+        product_id bigint,
+        unit_price bigint not null,
+        item_status varchar(255) not null,
+        product_name varchar(255) not null,
+        primary key (id)
+    )
+Hibernate: 
+    create table orders (
+        id bigint generated by default as identity,
+        ordered_at timestamp(6),
+        total_amount bigint not null,
+        address1 varchar(255),
+        address2 varchar(255),
+        customer_id varchar(255),
+        delivery_memo varchar(255),
+        order_number varchar(255) unique,
+        receiver_name varchar(255),
+        receiver_phone varchar(255),
+        status varchar(255) not null,
+        zipcode varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    create table point_history (
+        amount bigint not null,
+        balance bigint not null,
+        created_at timestamp(6),
+        id bigint generated by default as identity,
+        order_id bigint,
+        customer_id varchar(255),
+        reason varchar(255),
+        type varchar(255) not null,
+        primary key (id)
+    )
+Hibernate: 
+    create table product (
+        like_count integer,
+        review_count integer,
+        sales_count integer,
+        sound_level integer,
+        stock_quantity integer not null,
+        stretch_level integer,
+        category_id bigint,
+        created_at timestamp(6),
+        id bigint generated by default as identity,
+        product_price bigint not null,
+        description varchar(2000),
+        product_name varchar(255) not null,
+        scent varchar(255),
+        status varchar(255) not null,
+        texture varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    alter table if exists order_item 
+       add constraint FKt4dc2r9nbvbujrljv3e23iibt 
+       foreign key (order_id) 
+       references orders
+Hibernate: 
+    alter table if exists order_item 
+       add constraint FK551losx9j75ss5d6bfsqvijna 
+       foreign key (product_id) 
+       references product
+Hibernate: 
+    alter table if exists orders 
+       add constraint FK624gtjin3po807j3vix093tlf 
+       foreign key (customer_id) 
+       references customer
+Hibernate: 
+    alter table if exists point_history 
+       add constraint FK7bpnpboxysn3thylch3iinho2 
+       foreign key (customer_id) 
+       references customer
+2026-08-09T22:08:17.610+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-08-09T22:08:17.747+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-08-09T22:08:18.074+09:00  WARN 11086 --- [skala-shop-api] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-08-09T22:08:18.092+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-08-09T22:08:18.333+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:shopdb'
+2026-08-09T22:08:18.366+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 3 endpoints beneath base path '/actuator'
+2026-08-09T22:08:18.390+09:00  INFO 11086 --- [skala-shop-api] [    Test worker] c.s.s.shopapi.service.OrderServiceTest   : Started OrderServiceTest in 2.239 seconds (process running for 2.568)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        o1_0.id,
+        o1_0.address1,
+        o1_0.address2,
+        o1_0.customer_id,
+        o1_0.delivery_memo,
+        o1_0.order_number,
+        o1_0.ordered_at,
+        o1_0.receiver_name,
+        o1_0.receiver_phone,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.zipcode 
+    from
+        orders o1_0 
+    where
+        o1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        o1_0.id,
+        o1_0.address1,
+        o1_0.address2,
+        o1_0.customer_id,
+        o1_0.delivery_memo,
+        o1_0.order_number,
+        o1_0.ordered_at,
+        o1_0.receiver_name,
+        o1_0.receiver_phone,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.zipcode 
+    from
+        orders o1_0 
+    where
+        o1_0.id=?
+Hibernate: 
+    select
+        oi1_0.order_id,
+        oi1_0.id,
+        oi1_0.item_status,
+        oi1_0.product_id,
+        oi1_0.product_name,
+        oi1_0.quantity,
+        oi1_0.unit_price 
+    from
+        order_item oi1_0 
+    where
+        oi1_0.order_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        orders 
+    set
+        address1=?,
+        address2=?,
+        customer_id=?,
+        delivery_memo=?,
+        order_number=?,
+        ordered_at=?,
+        receiver_name=?,
+        receiver_phone=?,
+        status=?,
+        total_amount=?,
+        zipcode=? 
+    where
+        id=?
+Hibernate: 
+    update
+        order_item 
+    set
+        item_status=?,
+        order_id=?,
+        product_id=?,
+        product_name=?,
+        quantity=?,
+        unit_price=? 
+    where
+        id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        o1_0.id,
+        o1_0.address1,
+        o1_0.address2,
+        o1_0.customer_id,
+        o1_0.delivery_memo,
+        o1_0.order_number,
+        o1_0.ordered_at,
+        o1_0.receiver_name,
+        o1_0.receiver_phone,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.zipcode 
+    from
+        orders o1_0 
+    where
+        o1_0.id=?
+Hibernate: 
+    select
+        oi1_0.order_id,
+        oi1_0.id,
+        oi1_0.item_status,
+        oi1_0.product_id,
+        oi1_0.product_name,
+        oi1_0.quantity,
+        oi1_0.unit_price 
+    from
+        order_item oi1_0 
+    where
+        oi1_0.order_id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        o1_0.id,
+        o1_0.address1,
+        o1_0.address2,
+        o1_0.customer_id,
+        o1_0.delivery_memo,
+        o1_0.order_number,
+        o1_0.ordered_at,
+        o1_0.receiver_name,
+        o1_0.receiver_phone,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.zipcode 
+    from
+        orders o1_0 
+    where
+        o1_0.id=?
+Hibernate: 
+    select
+        oi1_0.order_id,
+        oi1_0.id,
+        oi1_0.item_status,
+        oi1_0.product_id,
+        oi1_0.product_name,
+        oi1_0.quantity,
+        oi1_0.unit_price 
+    from
+        order_item oi1_0 
+    where
+        oi1_0.order_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        orders 
+    set
+        address1=?,
+        address2=?,
+        customer_id=?,
+        delivery_memo=?,
+        order_number=?,
+        ordered_at=?,
+        receiver_name=?,
+        receiver_phone=?,
+        status=?,
+        total_amount=?,
+        zipcode=? 
+    where
+        id=?
+Hibernate: 
+    update
+        order_item 
+    set
+        item_status=?,
+        order_id=?,
+        product_id=?,
+        product_name=?,
+        quantity=?,
+        unit_price=? 
+    where
+        id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        ph1_0.id,
+        ph1_0.amount,
+        ph1_0.balance,
+        ph1_0.created_at,
+        ph1_0.customer_id,
+        ph1_0.order_id,
+        ph1_0.reason,
+        ph1_0.type 
+    from
+        point_history ph1_0 
+    where
+        ph1_0.customer_id=? 
+    order by
+        ph1_0.created_at desc
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        o1_0.id,
+        o1_0.address1,
+        o1_0.address2,
+        o1_0.customer_id,
+        o1_0.delivery_memo,
+        o1_0.order_number,
+        o1_0.ordered_at,
+        o1_0.receiver_name,
+        o1_0.receiver_phone,
+        o1_0.status,
+        o1_0.total_amount,
+        o1_0.zipcode 
+    from
+        orders o1_0 
+    where
+        o1_0.id=?
+Hibernate: 
+    select
+        oi1_0.order_id,
+        oi1_0.id,
+        oi1_0.item_status,
+        oi1_0.product_id,
+        oi1_0.product_name,
+        oi1_0.quantity,
+        oi1_0.unit_price 
+    from
+        order_item oi1_0 
+    where
+        oi1_0.order_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        orders 
+    set
+        address1=?,
+        address2=?,
+        customer_id=?,
+        delivery_memo=?,
+        order_number=?,
+        ordered_at=?,
+        receiver_name=?,
+        receiver_phone=?,
+        status=?,
+        total_amount=?,
+        zipcode=? 
+    where
+        id=?
+Hibernate: 
+    update
+        order_item 
+    set
+        item_status=?,
+        order_id=?,
+        product_id=?,
+        product_name=?,
+        quantity=?,
+        unit_price=? 
+    where
+        id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    insert 
+    into
+        customer
+        (created_at, customer_name, customer_password, customer_point, email, phone, role, customer_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    insert 
+    into
+        product
+        (category_id, created_at, description, like_count, product_name, product_price, review_count, sales_count, scent, sound_level, status, stock_quantity, stretch_level, texture, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=? for update
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=? for update
+Hibernate: 
+    insert 
+    into
+        orders
+        (address1, address2, customer_id, delivery_memo, order_number, ordered_at, receiver_name, receiver_phone, status, total_amount, zipcode, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        order_item
+        (item_status, order_id, product_id, product_name, quantity, unit_price, id) 
+    values
+        (?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        point_history
+        (amount, balance, created_at, customer_id, order_id, reason, type, id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, default)
+Hibernate: 
+    update
+        customer 
+    set
+        created_at=?,
+        customer_name=?,
+        customer_password=?,
+        customer_point=?,
+        email=?,
+        phone=?,
+        role=? 
+    where
+        customer_id=?
+Hibernate: 
+    update
+        product 
+    set
+        category_id=?,
+        created_at=?,
+        description=?,
+        like_count=?,
+        product_name=?,
+        product_price=?,
+        review_count=?,
+        sales_count=?,
+        scent=?,
+        sound_level=?,
+        status=?,
+        stock_quantity=?,
+        stretch_level=?,
+        texture=? 
+    where
+        id=?
+Hibernate: 
+    select
+        c1_0.customer_id,
+        c1_0.created_at,
+        c1_0.customer_name,
+        c1_0.customer_password,
+        c1_0.customer_point,
+        c1_0.email,
+        c1_0.phone,
+        c1_0.role 
+    from
+        customer c1_0 
+    where
+        c1_0.customer_id=?
+Hibernate: 
+    select
+        p1_0.id,
+        p1_0.category_id,
+        p1_0.created_at,
+        p1_0.description,
+        p1_0.like_count,
+        p1_0.product_name,
+        p1_0.product_price,
+        p1_0.review_count,
+        p1_0.sales_count,
+        p1_0.scent,
+        p1_0.sound_level,
+        p1_0.status,
+        p1_0.stock_quantity,
+        p1_0.stretch_level,
+        p1_0.texture 
+    from
+        product p1_0 
+    where
+        p1_0.id=?
+]]></system-out>
+  <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/Users/choeinseo/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.16/4a451ee6484abac3a498df0f3b33ed00a6fced4d/byte-buddy-agent-1.14.16.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

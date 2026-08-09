@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,118 +26,92 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductService {
 
+	private static final String STATUS_ON_SALE = "ON_SALE";
+
 	private final ProductRepository productRepository;
 	private final OrderItemRepository orderItemRepository;
 
-	// 판매 상태 기본값
-	private static final String ON_SALE = "ON_SALE";
-
-	// 전체 상품 목록 조회 (페이지 단위)
+	@Transactional(readOnly = true)
 	public Response getAllProducts(int offset, int count) {
-		Pageable pageable = PageRequest.of(offset, count);
-		Page<Product> page = productRepository.findAll(pageable);
+		Page<Product> page = productRepository.findAll(PageRequest.of(offset, count));
+		List<ProductDto> products = page.getContent().stream().map(ProductDto::from).toList();
 
-		List<ProductDto> products = page.getContent().stream()
-				.map(this::toProductDto)
-				.toList();
-
-		PagedList pagedList = new PagedList(page.getTotalElements(), offset, count, products);
-		return Response.success(pagedList);
+		return Response.success(new PagedList(page.getTotalElements(), offset, count, products));
 	}
 
-	// 개별 상품 상세 조회
+	@Transactional(readOnly = true)
 	public Response getProductById(Long id) {
-		Product product = productRepository.findById(id)
-				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
-
-		return Response.success(toProductDto(product));
+		return Response.success(ProductDto.from(findOrThrow(id)));
 	}
 
-	// 상품 등록
 	@Transactional
 	public Response createProduct(Product product) {
 		validate(product);
-
-		// 상품명 중복 확인
 		if (productRepository.findByProductName(product.getProductName()).isPresent()) {
-			throw new ResponseException(Error.DATA_DUPLICATED);
+			throw new ResponseException(Error.DATA_DUPLICATED, "이미 등록된 상품명입니다.");
 		}
 
-		// 새 상품이므로 ID 는 DB 가 매기도록 비워둠
+		// ID 가 남아 있으면 Spring Data 가 신규가 아닌 것으로 보고 merge 를 탄다.
 		product.setId(null);
-
-		// 기본값 세팅 - 재고 0, 판매중
 		if (product.getStockQuantity() == null) {
 			product.setStockQuantity(0);
 		}
 		if (StringUtil.isAnyEmpty(product.getStatus())) {
-			product.setStatus(ON_SALE);
+			product.setStatus(STATUS_ON_SALE);
 		}
 
-		Product saved = productRepository.save(product);
-		return Response.success(toProductDto(saved));
+		return Response.success(ProductDto.from(productRepository.save(product)));
 	}
 
-	// 상품 정보 수정
+	// 값이 들어온 항목만 반영한다. (PUT 이지만 부분 수정을 허용)
 	@Transactional
-	public Response updateProduct(Product product) {
-		if (product.getId() == null) {
+	public Response updateProduct(Product request) {
+		if (request.getId() == null) {
 			throw new ParameterException("id");
 		}
-		validate(product);
+		validate(request);
 
-		Product target = productRepository.findById(product.getId())
-				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
-
-		// 상품명이 바뀔 때만 중복 확인
-		if (!product.getProductName().equals(target.getProductName())
-				&& productRepository.findByProductName(product.getProductName()).isPresent()) {
-			throw new ResponseException(Error.DATA_DUPLICATED);
+		Product product = findOrThrow(request.getId());
+		if (!request.getProductName().equals(product.getProductName())
+				&& productRepository.findByProductName(request.getProductName()).isPresent()) {
+			throw new ResponseException(Error.DATA_DUPLICATED, "이미 등록된 상품명입니다.");
 		}
 
-		target.setProductName(product.getProductName());
-		target.setProductPrice(product.getProductPrice());
+		product.setProductName(request.getProductName());
+		product.setProductPrice(request.getProductPrice());
+		setIfPresent(request.getCategoryId(), product::setCategoryId);
+		setIfPresent(request.getDescription(), product::setDescription);
+		setIfPresent(request.getTexture(), product::setTexture);
+		setIfPresent(request.getSoundLevel(), product::setSoundLevel);
+		setIfPresent(request.getStretchLevel(), product::setStretchLevel);
+		setIfPresent(request.getScent(), product::setScent);
+		setIfPresent(request.getStockQuantity(), product::setStockQuantity);
+		setIfPresent(request.getStatus(), product::setStatus);
 
-		// 값이 들어온 항목만 반영 (null 이면 기존 값 유지)
-		apply(product.getCategoryId(), target::setCategoryId);
-		apply(product.getDescription(), target::setDescription);
-		apply(product.getTexture(), target::setTexture);
-		apply(product.getSoundLevel(), target::setSoundLevel);
-		apply(product.getStretchLevel(), target::setStretchLevel);
-		apply(product.getScent(), target::setScent);
-		apply(product.getStockQuantity(), target::setStockQuantity);
-		apply(product.getStatus(), target::setStatus);
-
-		return Response.success(toProductDto(target));
+		return Response.success(ProductDto.from(product));
 	}
 
-	// 상품 삭제
 	@Transactional
-	public Response deleteProduct(Product product) {
-		if (product.getId() == null) {
+	public Response deleteProduct(Product request) {
+		if (request.getId() == null) {
 			throw new ParameterException("id");
 		}
 
-		Product target = productRepository.findById(product.getId())
-				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
-
-		// 주문 이력이 있으면 삭제 불가 - 주문 내역의 상품 참조가 끊어지는 것을 막음
-		if (orderItemRepository.existsByProduct_Id(target.getId())) {
+		Product product = findOrThrow(request.getId());
+		// 주문 상세가 참조하는 상품을 지우면 과거 주문의 상품 링크가 끊어진다.
+		if (orderItemRepository.existsByProduct_Id(product.getId())) {
 			throw new ResponseException(Error.DELETE_NOT_ALLOWED, "주문 이력이 있는 상품은 삭제할 수 없습니다.");
 		}
 
-		productRepository.delete(target);
+		productRepository.delete(product);
 		return Response.success();
 	}
 
-	// 값이 있을 때만 setter 를 호출 (부분 수정용)
-	private <T> void apply(T value, Consumer<T> setter) {
-		if (value != null) {
-			setter.accept(value);
-		}
+	private Product findOrThrow(Long id) {
+		return productRepository.findById(id)
+				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
 	}
 
-	// 필수 입력값 검증 - 상품명과 가격은 반드시 있어야 함
 	private void validate(Product product) {
 		if (StringUtil.isAnyEmpty(product.getProductName())) {
 			throw new ParameterException("productName");
@@ -148,23 +121,9 @@ public class ProductService {
 		}
 	}
 
-	// 상품을 응답 DTO 로 변환
-	private ProductDto toProductDto(Product product) {
-		return ProductDto.builder()
-				.id(product.getId())
-				.categoryId(product.getCategoryId())
-				.productName(product.getProductName())
-				.productPrice(product.getProductPrice())
-				.description(product.getDescription())
-				.texture(product.getTexture())
-				.soundLevel(product.getSoundLevel())
-				.stretchLevel(product.getStretchLevel())
-				.scent(product.getScent())
-				.stockQuantity(product.getStockQuantity())
-				.status(product.getStatus())
-				.salesCount(product.getSalesCount())
-				.reviewCount(product.getReviewCount())
-				.likeCount(product.getLikeCount())
-				.build();
+	private <T> void setIfPresent(T value, Consumer<T> setter) {
+		if (value != null) {
+			setter.accept(value);
+		}
 	}
 }
