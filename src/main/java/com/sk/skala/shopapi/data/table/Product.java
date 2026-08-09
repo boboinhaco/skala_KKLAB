@@ -50,6 +50,12 @@ public class Product {
 	@Column(nullable = false)
 	private String status = "ON_SALE";
 
+	private Integer salesCount = 0;                         // 누적 판매 수량 (판매순 정렬용)
+
+	private Integer reviewCount = 0;                        // 후기 수 (후기순 정렬용)
+
+	private Integer likeCount = 0;                          // 찜 수 (인기순 정렬용)
+
 	private LocalDateTime createdAt;
 
 	public Product(String productName, Long productPrice, Integer stockQuantity) {

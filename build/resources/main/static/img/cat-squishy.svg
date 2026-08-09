@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <circle cx="32" cy="32" r="32" fill="#fff4f9"/>
+  <!-- 눌린 말랑이 -->
+  <path d="M32 14c11 0 19 6.4 19 14.6 0 9.4 -8.4 17.4 -19 17.4S13 38 13 28.6C13 20.4 21 14 32 14z"
+        fill="#ff86bd" stroke="#101010" stroke-width="3" stroke-linejoin="round"/>
+  <!-- 표정 -->
+  <circle cx="25" cy="30" r="2.6" fill="#101010"/>
+  <circle cx="39" cy="30" r="2.6" fill="#101010"/>
+  <path d="M28 36 q4 4 8 0" fill="none" stroke="#101010" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- 볼터치 -->
+  <ellipse cx="19.5" cy="34" rx="3" ry="2" fill="#ff5aa5" opacity=".55"/>
+  <ellipse cx="44.5" cy="34" rx="3" ry="2" fill="#ff5aa5" opacity=".55"/>
+  <!-- 누르는 손가락 자국 -->
+  <path d="M40 50 q6 -2 9 -8" fill="none" stroke="#101010" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 5"/>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <circle cx="32" cy="32" r="32" fill="#fff4f9"/>
+  <!-- 그릇 -->
+  <path d="M10 32 h44 a22 22 0 0 1 -22 22 A22 22 0 0 1 10 32 z" fill="#fff" stroke="#101010" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M14 38 h36 a18 18 0 0 1 -18 12 A18 18 0 0 1 14 38 z" fill="#ff86bd"/>
+  <!-- 튀어오르는 조각 -->
+  <rect x="16" y="18" width="9" height="9" rx="2" fill="#ff5aa5" transform="rotate(-18 20.5 22.5)"/>
+  <rect x="28" y="10" width="10" height="10" rx="2.4" fill="#101010" transform="rotate(14 33 15)"/>
+  <rect x="41" y="19" width="8" height="8" rx="2" fill="#ff86bd" transform="rotate(28 45 23)"/>
+  <circle cx="52" cy="13" r="2.6" fill="#ff5aa5"/>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice">
+<defs>
+  <radialGradient id="g1" cx="35%" cy="28%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="55%" stop-color="#ffd7ea"/>
+    <stop offset="100%" stop-color="#ff86bd"/>
+  </radialGradient>
+  <linearGradient id="scan" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ff5aa5" stop-opacity="0"/>
+    <stop offset="50%" stop-color="#ff5aa5" stop-opacity=".45"/>
+    <stop offset="100%" stop-color="#ff5aa5" stop-opacity="0"/>
+  </linearGradient>
+  <clipPath id="frame"><rect x="0" y="0" width="400" height="300"/></clipPath>
+</defs>
+
+<style>
+  .blob   { animation: morph 5s ease-in-out infinite; transform-origin: 200px 150px; }
+  .band   { animation: sweep 3.2s linear infinite; }
+  .tick   { animation: blink 1s steps(2) infinite; }
+  .spark  { animation: twinkle 2.4s ease-in-out infinite; transform-origin: center; }
+  .spark2 { animation-delay: .8s; }
+  .spark3 { animation-delay: 1.6s; }
+  .bar    { animation: pulse 1.6s ease-in-out infinite; transform-origin: bottom; }
+  .bar2   { animation-delay: .2s; }
+  .bar3   { animation-delay: .4s; }
+  .bar4   { animation-delay: .6s; }
+
+  @keyframes morph {
+    0%, 100% { d: path("M200 60c46 0 82 30 82 74s-36 86-82 86-82-42-82-86 36-74 82-74z"); transform: scale(1); }
+    35%      { d: path("M200 66c54 0 74 42 74 78s-30 76-74 76-76-38-76-78 22-76 76-76z"); transform: scale(1.05); }
+    65%      { d: path("M200 58c40 0 88 34 88 82s-46 80-88 80-70-38-70-84 30-78 70-78z"); transform: scale(.97); }
+  }
+  @keyframes sweep  { from { transform: translateY(-90px); } to { transform: translateY(310px); } }
+  @keyframes blink  { 0% { opacity: 1; } 50% { opacity: .15; } }
+  @keyframes twinkle{ 0%, 100% { opacity: .25; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.15); } }
+  @keyframes pulse  { 0%, 100% { transform: scaleY(.35); } 50% { transform: scaleY(1); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .band, .tick, .spark, .bar { animation: none; }
+  }
+</style>
+
+<rect width="400" height="300" fill="#fff4f9"/>
+
+<!-- 모눈 -->
+<g stroke="#ff86bd" stroke-opacity=".16">
+  <path d="M0 40H400M0 80H400M0 120H400M0 160H400M0 200H400M0 240H400M0 280H400"/>
+  <path d="M40 0V300M80 0V300M120 0V300M160 0V300M200 0V300M240 0V300M280 0V300M320 0V300M360 0V300"/>
+</g>
+
+<g clip-path="url(#frame)">
+  <!-- 말랑 표본 -->
+  <path class="blob" fill="url(#g1)" stroke="#ff5aa5" stroke-opacity=".35" stroke-width="2"
+        d="M200 60c46 0 82 30 82 74s-36 86-82 86-82-42-82-86 36-74 82-74z"/>
+
+  <!-- 표정 -->
+  <g fill="#101010">
+    <circle cx="180" cy="140" r="5"/>
+    <circle cx="222" cy="140" r="5"/>
+  </g>
+  <path d="M186 158q14 12 28 0" fill="none" stroke="#101010" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- 스캔 라인 -->
+  <rect class="band" x="0" y="0" width="400" height="90" fill="url(#scan)"/>
+</g>
+
+<!-- 반짝이 -->
+<g fill="#ff5aa5">
+  <path class="spark"  d="M320 62 L324 76 L338 80 L324 84 L320 98 L316 84 L302 80 L316 76 Z"/>
+  <path class="spark spark2" d="M78 96 L80.5 105 L89 108 L80.5 111 L78 120 L75.5 111 L67 108 L75.5 105 Z"/>
+  <path class="spark spark3" d="M300 210 L302 217 L309 219 L302 221 L300 228 L298 221 L291 219 L298 217 Z"/>
+</g>
+
+<!-- 계측 UI -->
+<g font-family="ui-monospace, Menlo, monospace" font-size="11" letter-spacing="1.4">
+  <circle class="tick" cx="26" cy="26" r="5" fill="#ff5aa5"/>
+  <text x="38" y="30" fill="#ff5aa5">REC</text>
+  <text x="300" y="30" fill="#ff5aa5">SQUISH 05/05</text>
+  <text x="20" y="284" fill="#8d8d8d">MALLANG LAB · LIVE SCAN</text>
+</g>
+
+<!-- 레벨 미터 -->
+<g fill="#ff5aa5">
+  <rect class="bar"      x="330" y="240" width="8" height="34" rx="4"/>
+  <rect class="bar bar2" x="344" y="240" width="8" height="34" rx="4"/>
+  <rect class="bar bar3" x="358" y="240" width="8" height="34" rx="4"/>
+  <rect class="bar bar4" x="372" y="240" width="8" height="34" rx="4"/>
+</g>
+
+<!-- 프레임 코너 -->
+<g stroke="#101010" stroke-width="3" fill="none" stroke-opacity=".5">
+  <path d="M14 44V14h30"/><path d="M356 14h30v30"/>
+  <path d="M386 256v30h-30"/><path d="M44 286H14v-30"/>
+</g>
+</svg>

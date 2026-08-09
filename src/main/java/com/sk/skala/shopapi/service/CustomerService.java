@@ -1,11 +1,11 @@
 package com.sk.skala.shopapi.service;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,17 +54,12 @@ public class CustomerService {
 
 	// 전체 고객 목록 조회 (페이지 단위)
 	public Response getAllCustomers(int offset, int count) {
-		Pageable pageable = PageRequest.of(offset, count);
-		Page<Customer> page = customerRepository.findAll(pageable);
-		List<Customer> customers = page.getContent();
+		Page<Customer> page = customerRepository.findAll(PageRequest.of(offset, count));
 
-		// 응답에 비밀번호가 노출되지 않도록 제거(null)
-		for (Customer c : customers) {
-			c.setCustomerPassword(null);
-		}
+		// 비밀번호가 없는 DTO 로 변환해 응답
+		List<CustomerDto> customers = page.getContent().stream().map(this::toCustomerDto).toList();
 
-		PagedList pagedList = new PagedList(page.getTotalElements(), offset, count, customers);
-		return Response.success(pagedList);
+		return Response.success(new PagedList(page.getTotalElements(), offset, count, customers));
 	}
 
 	// 고객 생성 (회원가입)
@@ -91,11 +86,7 @@ public class CustomerService {
 			customer.setRole("USER");
 		}
 
-		Customer saved = customerRepository.save(customer);
-
-		// 응답에 비밀번호가 노출되지 않도록 제거(null)
-		saved.setCustomerPassword(null);
-		return Response.success(saved);
+		return Response.success(toCustomerDto(customerRepository.save(customer)));
 	}
 
 	// 단일 고객 및 주문 상품 목록 조회
@@ -103,23 +94,19 @@ public class CustomerService {
 	public Response getCustomerById(String customerId) {
 		Customer customer = customerRepository.findById(customerId)
 				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
-		List<OrderItem> orderItems = orderItemRepository.findByOrders_Customer_CustomerId(customerId);
-		List<OrderItemDto> products = orderItems.stream()
-				.map(item -> OrderItemDto.builder()
-						.productId(item.getProduct() != null ? item.getProduct().getId() : null)
-						.productName(item.getProductName())
-						.unitPrice(item.getUnitPrice())
-						.quantity(item.getQuantity())
-						.subtotal(item.getSubtotal())
-						.itemStatus(item.getItemStatus())
-						.build())
-				.toList();
-		OrderListDto orderListDto = OrderListDto.builder()
-				.customerId(customer.getCustomerId())
-				.customerPoint(customer.getCustomerPoint() == null ? 0.0 : customer.getCustomerPoint().doubleValue())
-				.products(products)
-				.build();
-		return Response.success(orderListDto);
+
+		return Response.success(toOrderListDto(customer));
+	}
+
+	// 이름으로 고객 조회 (동명이인이 있을 수 있어 목록으로 반환)
+	@Transactional(readOnly = true)
+	public Response getCustomersByName(String customerName) {
+		List<Customer> customers = customerRepository.findByCustomerName(customerName);
+		if (customers.isEmpty()) {
+			throw new ResponseException(Error.DATA_NOT_FOUND);
+		}
+
+		return Response.success(customers.stream().map(this::toCustomerDto).toList());
 	}
 
 	// 상품주문 (포인트 차감)
@@ -186,31 +173,20 @@ public class CustomerService {
 		Orders saved = ordersRepository.save(orders);
 
 		// 8단계: 응답 조립
-		List<OrderItemDto> items = saved.getOrderItems().stream()
-				.map(item -> OrderItemDto.builder()
-						.productId(item.getProduct() != null ? item.getProduct().getId() : null)
-						.productName(item.getProductName())
-						.unitPrice(item.getUnitPrice())
-						.quantity(item.getQuantity())
-						.subtotal(item.getSubtotal())
-						.itemStatus(item.getItemStatus())
-						.build())
+		return Response.success(toOrderDto(saved));
+	}
+
+	// 로그인한 고객의 주문 목록 (최신순, 상세 포함)
+	@Transactional(readOnly = true)
+	public Response getMyOrders() {
+		String customerId = sessionHandler.getCustomerId();
+
+		List<OrderDto> orders = ordersRepository.findWithItemsByCustomerId(customerId).stream()
+				.sorted(Comparator.comparing(Orders::getOrderedAt).reversed())
+				.map(this::toOrderDto)
 				.toList();
 
-		OrderDto orderDto = OrderDto.builder()
-				.orderId(saved.getId())
-				.orderNumber(saved.getOrderNumber())
-				.customerId(saved.getCustomer().getCustomerId())
-				.totalAmount(saved.getTotalAmount())
-				.status(saved.getStatus())
-				.receiverName(saved.getReceiverName())
-				.address1(saved.getAddress1())
-				.address2(saved.getAddress2())
-				.orderedAt(saved.getOrderedAt())
-				.items(items)
-				.build();
-
-		return Response.success(orderDto);
+		return Response.success(orders);
 	}
 
 	// 주문 취소 (포인트 환급)
@@ -343,6 +319,12 @@ public class CustomerService {
 
 		String customerId = sessionHandler.getCustomerId();
 
+		// 다른 사람의 ID 가 실려와도 세션 기준으로만 삭제
+		if (StringUtil.isNoneEmpty(customer.getCustomerId())
+				&& !customerId.equals(customer.getCustomerId())) {
+			throw new ResponseException(Error.NOT_AUTHENTICATED, "본인 계정만 삭제할 수 있습니다.");
+		}
+
 		Customer target = customerRepository.findById(customerId)
 				.orElseThrow(() -> new ResponseException(Error.DATA_NOT_FOUND));
 
@@ -390,6 +372,17 @@ public class CustomerService {
 				.address2(orders.getAddress2())
 				.orderedAt(orders.getOrderedAt())
 				.items(toOrderItemDtos(orders.getOrderItems()))
+				.build();
+	}
+
+	// 고객 + 주문한 상품 목록을 응답 DTO 로 변환
+	private OrderListDto toOrderListDto(Customer customer) {
+		Long point = customer.getCustomerPoint();
+
+		return OrderListDto.builder()
+				.customerId(customer.getCustomerId())
+				.customerPoint(point == null ? 0.0 : point.doubleValue())
+				.products(toOrderItemDtos(orderItemRepository.findByOrders_Customer_CustomerId(customer.getCustomerId())))
 				.build();
 	}
 

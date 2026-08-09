@@ -34,9 +34,27 @@ public class CustomerController {
 		return customerService.getAllCustomers(offset, count);
 	}
 
+	// 로그인한 고객의 주문 목록 (경로 고정 매핑이 {customerId} 보다 우선함)
+	@GetMapping("/orders")
+	public Response getMyOrders() {
+		return customerService.getMyOrders();
+	}
+
+	// 이름으로 고객 조회 ({customerId} 와 경로가 겹치므로 /name 을 앞에 둠)
+	@GetMapping("/name/{customerName}")
+	public Response getCustomersByName(@PathVariable String customerName) {
+		return customerService.getCustomersByName(customerName);
+	}
+
 	// 단일 고객 상세 및 주문 목록 조회
 	@GetMapping("/{customerId}")
 	public Response getCustomerById(@PathVariable String customerId) {
+		return customerService.getCustomerById(customerId);
+	}
+
+	// 고객이 주문한 상품 목록 조회
+	@GetMapping("/{customerId}/products")
+	public Response getCustomerProducts(@PathVariable String customerId) {
 		return customerService.getCustomerById(customerId);
 	}
 
@@ -58,9 +76,16 @@ public class CustomerController {
 		return customerService.updateCustomer(customer);
 	}
 
-	// 고객 삭제
+	// 고객 삭제 (본인 확인용 비밀번호를 바디로 전달)
 	@DeleteMapping
 	public Response deleteCustomer(@RequestBody Customer customer) {
+		return customerService.deleteCustomer(customer);
+	}
+
+	// 고객 삭제 - 경로변수 방식
+	@DeleteMapping("/{customerId}")
+	public Response deleteCustomerById(@PathVariable String customerId, @RequestBody Customer customer) {
+		customer.setCustomerId(customerId);
 		return customerService.deleteCustomer(customer);
 	}
 

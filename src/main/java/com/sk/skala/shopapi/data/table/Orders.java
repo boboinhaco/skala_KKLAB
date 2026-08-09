@@ -1,8 +1,10 @@
 package com.sk.skala.shopapi.data.table;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,6 +29,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Orders {
+
+	private static final DateTimeFormatter ORDER_NUMBER_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,9 +75,11 @@ public class Orders {
 		}
 	}
 
-	// 주문번호 생성 - KK + 날짜시각 형식
+	// 주문번호 생성 - KK + 날짜시각(밀리초) + 난수 4자리
+	// 초 단위만 쓰면 같은 초에 들어온 주문끼리 unique 제약에 걸리므로 뒤에 밀리초와 난수를 붙인다.
 	private String generateOrderNumber() {
-		return "KK" + LocalDateTime.now().toString().replaceAll("[-:.T]", "").substring(0, 14);
+		return "KK" + LocalDateTime.now().format(ORDER_NUMBER_FORMAT)
+				+ String.format("%04d", ThreadLocalRandom.current().nextInt(10000));
 	}
 
 	// 양방향 연관관계 편의 메서드

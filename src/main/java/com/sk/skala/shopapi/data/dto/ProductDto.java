@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ProductDto {
 
 	private Long id;
+	private Long categoryId;
 	private String productName;
 	private Long productPrice;
 	private String description;
@@ -24,4 +25,7 @@ public class ProductDto {
 	private String scent;
 	private Integer stockQuantity;
 	private String status;
+	private Integer salesCount;
+	private Integer reviewCount;
+	private Integer likeCount;
 }

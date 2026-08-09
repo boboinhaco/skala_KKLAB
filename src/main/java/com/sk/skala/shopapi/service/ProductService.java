@@ -1,6 +1,7 @@
 package com.sk.skala.shopapi.service;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -98,31 +99,15 @@ public class ProductService {
 		target.setProductName(product.getProductName());
 		target.setProductPrice(product.getProductPrice());
 
-		// 값이 들어온 항목만 반영
-		if (product.getCategoryId() != null) {
-			target.setCategoryId(product.getCategoryId());
-		}
-		if (product.getDescription() != null) {
-			target.setDescription(product.getDescription());
-		}
-		if (product.getTexture() != null) {
-			target.setTexture(product.getTexture());
-		}
-		if (product.getSoundLevel() != null) {
-			target.setSoundLevel(product.getSoundLevel());
-		}
-		if (product.getStretchLevel() != null) {
-			target.setStretchLevel(product.getStretchLevel());
-		}
-		if (product.getScent() != null) {
-			target.setScent(product.getScent());
-		}
-		if (product.getStockQuantity() != null) {
-			target.setStockQuantity(product.getStockQuantity());
-		}
-		if (StringUtil.isNoneEmpty(product.getStatus())) {
-			target.setStatus(product.getStatus());
-		}
+		// 값이 들어온 항목만 반영 (null 이면 기존 값 유지)
+		apply(product.getCategoryId(), target::setCategoryId);
+		apply(product.getDescription(), target::setDescription);
+		apply(product.getTexture(), target::setTexture);
+		apply(product.getSoundLevel(), target::setSoundLevel);
+		apply(product.getStretchLevel(), target::setStretchLevel);
+		apply(product.getScent(), target::setScent);
+		apply(product.getStockQuantity(), target::setStockQuantity);
+		apply(product.getStatus(), target::setStatus);
 
 		return Response.success(toProductDto(target));
 	}
@@ -146,6 +131,13 @@ public class ProductService {
 		return Response.success();
 	}
 
+	// 값이 있을 때만 setter 를 호출 (부분 수정용)
+	private <T> void apply(T value, Consumer<T> setter) {
+		if (value != null) {
+			setter.accept(value);
+		}
+	}
+
 	// 필수 입력값 검증 - 상품명과 가격은 반드시 있어야 함
 	private void validate(Product product) {
 		if (StringUtil.isAnyEmpty(product.getProductName())) {
@@ -160,6 +152,7 @@ public class ProductService {
 	private ProductDto toProductDto(Product product) {
 		return ProductDto.builder()
 				.id(product.getId())
+				.categoryId(product.getCategoryId())
 				.productName(product.getProductName())
 				.productPrice(product.getProductPrice())
 				.description(product.getDescription())
@@ -169,6 +162,9 @@ public class ProductService {
 				.scent(product.getScent())
 				.stockQuantity(product.getStockQuantity())
 				.status(product.getStatus())
+				.salesCount(product.getSalesCount())
+				.reviewCount(product.getReviewCount())
+				.likeCount(product.getLikeCount())
 				.build();
 	}
 }
