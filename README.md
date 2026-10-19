@@ -1,6 +1,21 @@
-# 말랑연구소 (skala-shop-api)
+# 말랑연구소 (skala-shop-api) — Spring Boot 쇼핑몰 API
 
-SKALA 실습 과제 **스칼라 온라인 쇼핑몰 API**를 구현하고, 그 위에 말랑이(스퀴시) 쇼핑몰 프론트엔드를 올린 프로젝트입니다.
+SKALA 실습 과제 **온라인 쇼핑몰 API**를 Spring Boot로 구현하고, 그 위에 말랑이(스퀴시) 쇼핑몰 프론트엔드를 올린 프로젝트입니다. 과제 요구사항을 넘어서 **주문서 구조, 동시 주문 정합성(비관적 잠금), BCrypt, 서비스 테스트 20건**까지 직접 설계하고 검증했습니다.
+
+![Java](https://img.shields.io/badge/Java-17-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.0-6DB33F?logo=springboot&logoColor=white)
+![JPA](https://img.shields.io/badge/Spring%20Data-JPA-6DB33F)
+![H2](https://img.shields.io/badge/H2-in--memory-0000BB)
+![JWT](https://img.shields.io/badge/JWT-jjwt-000000?logo=jsonwebtokens&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+
+| | |
+|---|---|
+| **형태** | 개인 프로젝트 (SKALA 4기 백엔드 실습, 2026.08) |
+| **기술 하이라이트** | 동시 주문 시 포인트·재고 차감 유실(lost update)을 `PESSIMISTIC_WRITE` 잠금으로 해결하고 8스레드 동시성 테스트로 검증 ([4-4](#4-4-동시-주문-시-포인트재고-차감-유실-lost-update)) · 주문서(Orders) 1:N 주문상세 구조와 가격·배송지 스냅샷 보관 ([2-1](#2-1-주문-구조--주문서orders-도입)) · JWT 쿠키 인증 + 소유권 검증 · BCrypt |
+| **테스트** | `OrderServiceTest` 9 · `CustomerServiceTest` 10 · 컨텍스트 1 = 20건 (`./gradlew test`) |
+| **직접 찾아 고친 버그** | 주문번호 초 단위 충돌, 초기 포인트 미지급, 시드 NOT NULL 누락, lost update, 비밀번호 평문 저장 ([4장](#4-실행-중-발견하고-고친-버그)) |
 
 - 백엔드 : Spring Boot 3.3.0 · Java 17 · Spring Data JPA · H2(in-memory) · JWT(jjwt 0.11.5) · AOP · Actuator · Gradle
 - 프론트 : 정적 HTML/CSS/JS (`src/main/resources/static`) — Spring Boot가 그대로 서빙
