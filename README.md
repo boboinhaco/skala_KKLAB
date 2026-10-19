@@ -10,6 +10,8 @@ SKALA 실습 과제 **온라인 쇼핑몰 API**를 Spring Boot로 구현하고, 
 ![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
 
+<p align="center"><img src="docs/screenshots/landing.jpg" width="900" alt="말랑연구소 쇼핑몰 화면"></p>
+
 | | |
 |---|---|
 | **형태** | 개인 프로젝트 (SKALA 4기 백엔드 실습, 2026.08) |
